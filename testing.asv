@@ -1,0 +1,13 @@
+% Testing some of the functions out
+close all; clear all;
+% Add src folder to path
+if (isempty(strfind(pwd(), strcat(filesep, 'src'))))
+    addpath('src');
+end
+
+% Load up all of the recorded neuron data
+neuronData = loadMTData();
+numNeurons = size(neuronData, 2);
+
+
+    
