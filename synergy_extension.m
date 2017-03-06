@@ -1,5 +1,9 @@
 close all; 
-
+% Add src folder to path
+if (isempty(strfind(pwd(), strcat(filesep, 'src'))))
+    addpath('src');
+    addpath('src/neuralcoding');
+end
 % Creates a raster of one set of data, to visualize it. 
 
 cell1 = load('cell_11l10.mat');
