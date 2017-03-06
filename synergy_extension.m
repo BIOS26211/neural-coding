@@ -86,4 +86,7 @@ for i = 1:s(1)/4
     end
 end 
 
-delta_I = I_sigAB - I_sigA - I_sigB
+%%
+n = loadMTdata(36);
+c = getCoding(n);
+c.code(:,:,
