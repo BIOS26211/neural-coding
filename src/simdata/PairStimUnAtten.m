@@ -1,32 +1,33 @@
-function out = GenData(n,dt,tbin,ndir,prob,stimBin,P)
+function out = PairStimUnAtten(n,tbin,ndir,prob,stimBin,P)
 
 % By: Emma Bsales
 % University of Chicago
-% February 1, 2017. Updated March 5, 2017.
+% March 5, 2017.
 % ebsales@uchicago.edu
 %--------------------------------------------------------------------------
 % This script generates a data set of information theory 'words' for 'n'
-% Neurons. These data sets can either be independent or dependent of the
-% direction of stimulus movement.
+% Neurons. These data sets are dependent on the direction of stimulus 
+% movement. The set deals with 2 stimuli per trial with the probabilities
+% are independent of attention (calculated by multiplying the probability 
+% (of firing for each stimulus direction).
 %--------------------------------------------------------------------------
 % Inputs:   % n = number of neurons in the population
-            % dt = firing rate
             % prob = probability of each neuron firing for each stimulus
                 % direction (should be n x ndir in size)
             % ndir = number of possible direction bins
             % tbin = number of time bins
             % P = if the data has a poisson or guassian distribution
+                % (0 = Guass, 1 = Poiss)
             % stimBin = the stimulus direction bin for each time period 
-                 % (must be time bins x 1 of values in 1:dBins)
-               % (0 = Guass, 1 = Poiss)
+                % (must be time bins x 1 of values in 1:dBins)
  % Outputs:     % out.type = if the data is independent ('indp') or dependent ('dept')
                 % out.nNeurons = number of neurons               
                 % out.tBins = number of time bins
                 % out.dBins = = number of possible direction bins
                 % out.stimBin = direction (in 1:ndir) the stimulus is moving during the corresponding time bin
                 % out.degBins = boundaries of the direction bins
-                % out.probabilities = probability of neurons firing
-                % out.fireRate = firing rate
+                % out.probabilities = probability of neurons firing 
+                    % (calculated by multiplying the probabilities of the neuron at each of the stim bins for that time period)
                 % out.distribution = the gaussian or poisson distributed
                     % random variables
                 % out.fired = if the neurons fired during ea time bin (1 = yes)
@@ -39,13 +40,13 @@ function out = GenData(n,dt,tbin,ndir,prob,stimBin,P)
 
 % parameters
 isPoisson = P;
-fireRate = dt;
+fireRate = 1;
 
 tBins = tbin;         % number of time bins*
 dBins = ndir;          % number of direction bins; should be odd
 
 nNeurons = n;       % number of neurons
-pNeuron = prob;        % probability of each neuron firing for each stimBin
+probs = prob;        % probability of each neuron firing for each stimBin
 stimBin = stimBin;
 
 fired = nan(nNeurons,tBins);     % create blank count vector
@@ -54,20 +55,28 @@ degBins = nan(1,dBins);       % blank vector to put the degrees of each directio
 %stimBin = randsample(dBins,tBins,true);      % randomly sample from the number of direction bins for each time bin
 dist = nan(nNeurons,tBins);        % distribution variable
 
-if length(pNeuron(1,:)) == nNeurons
-    pNeuron = pNeuron';
+if length(probs(1,:)) == nNeurons
+    probs = probs';
 end
-if length(pNeuron) == 1 
-    pNeuron = repmat(pNeuron,[nNeurons dBins]);
-elseif length(pNeuron) == dBins && length(pNeuron) ~= nNeurons
-    pNeuron = repmat(pNeuron, [nNeurons 1]);
-elseif length(pNeuron) ~= dBins && length(pNeuron) == nNeurons
-    pNeuron = repmat(pNeuron, [1 dBins]);
+if length(probs) == 1 
+    probs = repmat(probs,[nNeurons dBins]);
+elseif length(probs) == dBins && length(probs) ~= nNeurons
+    probs = repmat(probs, [nNeurons 1]);
+elseif length(probs) ~= dBins && length(probs) == nNeurons
+    probs = repmat(probs, [1 dBins]);
 end
 
 stimBinSize = 180/(dBins-1);                                    % caluclate the size of the direciton bins
 for i = 1:dBins
     degBins(i) = stimBinSize*i-(90+stimBinSize);              % calculate the degree of each direction
+end
+
+% calculated probability
+pNeuron = nan(nNeurons,length(stimBin));
+for j = 1:nNeurons
+    for i = 1:length(stimBin)
+        pNeuron(j,i) = probs(j,stimBin(1,i))*probs(j,stimBin(2,i));
+    end
 end
 
 % start generating data
@@ -114,12 +123,12 @@ InputForm = InputFormData(2:end,2:end,:);
     out.isPoisson = isPoisson;
     out.stimBin = stimBin;
     out.degBins = degBins;
-    out.probabilities = pNeuron;
-    out.fireRate = fireRate;
+    out.probabilities = pNeuron; % are calculated by multiplying the probabilities of the neuron at each of the stim bins for that time period
     out.distribution = dist; % randomly generated numbers either poisson or gaussian distribution
     out.fired = fired;
     out.words = words;
     out.count = count;
     out.InputFormData = InputFormData;
     out.InputForm = InputForm;
+
 end
