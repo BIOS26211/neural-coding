@@ -10,8 +10,11 @@ function neurons = loadMTData(N)
     end
 
     % Get all files in MT_data folder
-    files = ls(MT_DATA_LOC);    % get all files in folder
-    files = cellstr(files);     % convert to cell array
+    dircon = dir(MT_DATA_LOC);    % get all files in folder
+    files = cell([length(dircon), 1]);
+    for i = 1:length(dircon)
+        files{i} = dircon(i).name;
+    end
     
     % Get the indices of files in the folder that are .mat data files for
     % neuron activity. Files are of the format: "cell_xxxxx.mat"
@@ -36,6 +39,7 @@ function neurons = loadMTData(N)
     neurons = [];  % Can you pre-initialize a struct array??
     for f = 1:N
         n = load(strcat(MT_DATA_LOC, filesep, cell2mat(loads(f,:))));
+        n.data(n.data(:) ~= 0) = 1;  % Make data more binary
         neurons = [neurons, n]; %#ok<AGROW>
     end
 end
