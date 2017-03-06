@@ -10,16 +10,11 @@ function neurons = loadMTData(N)
     end
 
     % Get all files in MT_data folder
-<<<<<<< Updated upstream
     dircon = dir(MT_DATA_LOC);    % get all files in folder
     files = cell([length(dircon), 1]);
     for i = 1:length(dircon)
         files{i} = dircon(i).name;
     end
-=======
-    files = dir(MT_DATA_LOC);    % get all files in folder
-    files = cellstr(files);     % convert to cell array
->>>>>>> Stashed changes
     
     % Get the indices of files in the folder that are .mat data files for
     % neuron activity. Files are of the format: "cell_xxxxx.mat"
