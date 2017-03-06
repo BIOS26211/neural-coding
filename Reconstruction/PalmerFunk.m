@@ -1,0 +1,1 @@
+function [inf] = PalmerFunk(nargin, 

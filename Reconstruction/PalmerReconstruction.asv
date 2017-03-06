@@ -211,17 +211,17 @@ imax =-1*(pfire(1))*log2(pfire(1))-(pfire(2))*log2(pfire(2))-(pfire(3))*log2(pfi
 
 % Calculate the information 
 
-inf = zeros(s(1),s(2));
+iwords = zeros(s(1),s(2));
 
 for i = 1:s(1)
     for j = 1:s(2)
-        inf(i,j) = -1*pnt(i,j)*log2(pnt(i,j));
+        iwords(i,j) = -1*pnt(i,j)*log2(pnt(i,j));
     end
 end
 
-st = sum(inf);
+st = sum(iwords);
 
-iwords = imax - ((1/(14*s(1)))*(sum(st)));
+inf = imax - ((1/(14*s(1)))*(sum(st)));
 
 
 
