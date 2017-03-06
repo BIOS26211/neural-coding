@@ -1,5 +1,6 @@
 function neurons = loadMTData(N)
-%LOADMTDATA Loads N random .mat files in the MT_Data folder.
+%LOADMTDATA Loads N random .mat files in the MT_Data folder. If N is not
+% specified, loads up all of them.
 %   Returns:
 %     neurons: array of structures
     if (isempty(strfind(pwd(), strcat(filesep, 'src'))))
@@ -18,7 +19,9 @@ function neurons = loadMTData(N)
     
     % If N > number of relevant files, produce error
     n_rel = sum(inds);
-    if (N > n_rel)
+    if (nargin == 0)
+        N = n_rel;
+    elseif (N > n_rel)
         error('Only %d MT neuron data files are available.', n_rel);
     end
     
