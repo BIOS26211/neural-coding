@@ -1,5 +1,6 @@
-function neurons = loadMTData()
-%LOADMTDATA Loads each .mat file in the MT_Data folder.
+function neurons = loadMTData(N)
+%LOADMTDATA Loads N random .mat files in the MT_Data folder. If N is not
+% specified, loads up all of them.
 %   Returns:
 %     neurons: array of structures
     if (isempty(strfind(pwd(), strcat(filesep, 'src'))))
@@ -9,15 +10,33 @@ function neurons = loadMTData()
     end
 
     % Get all files in MT_data folder
-    files = ls(MT_DATA_LOC);
+    files = ls(MT_DATA_LOC);    % get all files in folder
+    files = cellstr(files);     % convert to cell array
     
-    neurons = [];
-    for f = 1:size(files,1)
-        if (~isempty(strfind(files(f,:), '.mat')) && ~isempty(strfind(files(f,:), 'cell')))
-            % Load and add
-            n = load(strcat(MT_DATA_LOC, filesep, files(f,:)));
-            neurons = [neurons, n]; %#ok<AGROW>
-        end
+    % Get the indices of files in the folder that are .mat data files for
+    % neuron activity. Files are of the format: "cell_xxxxx.mat"
+    inds = contains(files, '.mat') & contains(files, 'cell');
+    
+    % If N > number of relevant files, produce error
+    n_rel = sum(inds);
+    if (nargin == 0)
+        N = n_rel;
+    elseif (N > n_rel)
+        error('Only %d MT neuron data files are available.', n_rel);
+    end
+    
+    % Take only the relevant files
+    files = files(inds);
+    
+    % Generate N random indices
+    fnum = randperm(n_rel, N);
+    
+    % Load randomly chosen file into neurons, an array of structs
+    loads = files(fnum);
+    neurons = [];  % Can you pre-initialize a struct array??
+    for f = 1:N
+        n = load(strcat(MT_DATA_LOC, filesep, cell2mat(loads(f,:))));
+        neurons = [neurons, n]; %#ok<AGROW>
     end
 end
 
