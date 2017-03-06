@@ -1,0 +1,4 @@
+function [inf] = PalmerFunk(nargin, datainput)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This is a function to use the 
