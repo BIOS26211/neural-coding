@@ -78,11 +78,9 @@ count1A0B0C = zeros(1,length(b3)); %1A x 0B
 for i = 1:length(b2)
     cellA = b3(i,1); %cell A index
     cellB = b3(i,2); %cell B index
-    cellC = b3(i,3); %cell C index
+    cellC = b3(i,3);
     dataA = data(cellA,:); %row in data cell corresponding to cell A spike train
     dataB = data(cellB,:); %row in data cell corresponding to cell B spike train  
-    dataC = data(cellC,:);
-    
     spikeA = find(dataA == 1); %location of 1's in A
     nonspikeB = find(dataB == 0); %location of 0's in B
     for j = 1:length(spikeA)
