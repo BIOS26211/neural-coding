@@ -3,6 +3,7 @@ close all;
 if (isempty(strfind(pwd(), strcat(filesep, 'src'))))
     addpath('src');
     addpath('src/neuralcoding');
+    addpath('Reconstruction');
 end
 % Creates a raster of one set of data, to visualize it. 
 
@@ -85,8 +86,11 @@ for i = 1:s(1)/4
         end
     end
 end 
+%%
+
+PalmerFunk(36)
 
 %%
 n = loadMTdata(36);
 c = getCoding(n);
-c.code(:,:,
+c.code(:,:,1,1)
