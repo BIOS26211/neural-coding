@@ -72,17 +72,19 @@ end
 b3 = nchoosek(1:36,3); %7140 possible combinations for triplets of cells
 
 %initialize delta I array
-count1A0B0C = zeros(1,length(b3)); %1A x 0B
+count1A0B0C = zeros(1,length(b3)); %1A x 0B x 0C
 
-%1A x 0B
+%1A x 0B x 0C
 for i = 1:length(b2)
     cellA = b3(i,1); %cell A index
     cellB = b3(i,2); %cell B index
-    cellC = b3(i,3);
+    cellC = b3(i,3); %cell C index
     dataA = data(cellA,:); %row in data cell corresponding to cell A spike train
     dataB = data(cellB,:); %row in data cell corresponding to cell B spike train  
+    dataC = data(cellC,:); %row in data cell corresponding to cell C spike train 
     spikeA = find(dataA == 1); %location of 1's in A
     nonspikeB = find(dataB == 0); %location of 0's in B
+    nonspikeC = find(dataC == 0); %location of 0's in C
     for j = 1:length(spikeA)
         valA = spikeA(j);
         for k = 1:length(nonspikeB)
