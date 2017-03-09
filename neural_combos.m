@@ -15,13 +15,15 @@ end
 
 %% Check stats of a subset of neurons in data
 % This takes a while
-ndata = loadMTData(2);
+fprintf('Start time: %s\n', datetime('now'))
+ndata = loadMTData(16);
 ncode = getCoding(ndata);
+fprintf('End time: %s\n', datetime('now'))
 
 %% Neuron redundancy in neural codes of various lengths
 % So does this
 trials = 7;
-nneurons = 0:3:36; nneurons(1) = 1;
+nneurons = 2:2:16; %nneurons(1) = 1;
 rdata = zeros(length(nneurons), 1);
 prdata = zeros(length(nneurons), 1);
 idata = zeros(length(nneurons), 1);
@@ -39,7 +41,7 @@ for n = 1:length(nneurons)
     rdata(n) = rdata(n) / trials;
     prdata(n) = rdata(n) / nneurons(n);
     idata(n) = idata(n) / trials;
-    fprintf('\t%d neurons: %d redundant, info = %f\n', nneurons(n), rdata(n), idata(n))
+    fprintf('\t%d neurons:\t%.4f redundant,\tinfo = %.4f\n', nneurons(n), rdata(n), idata(n))
 end
 fprintf('End time: %s\n', datetime('now'))
 
