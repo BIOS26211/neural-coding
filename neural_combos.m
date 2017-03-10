@@ -16,9 +16,18 @@ end
 %% Check stats of a subset of neurons in data
 % This takes a while
 fprintf('Start time: %s\n', datetime('now'))
-ndata = loadMTData(16);
+n = 6;
+ndata = loadMTData(n);
 ncode = getCoding(ndata);
 fprintf('End time: %s\n', datetime('now'))
+
+
+% Firing rate info demo
+for i = 1:n
+    r = neuronProb(ndata(i));
+    rInfo = rateInfo(r(:, 8), 2);
+    fprintf('Info from firing rate in direction 8: %.3f bits\n', rInfo);
+end
 
 %% Neuron redundancy in neural codes of various lengths
 % So does this

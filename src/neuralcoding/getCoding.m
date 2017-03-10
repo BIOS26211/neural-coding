@@ -76,20 +76,8 @@ function code = getCoding(neurons)
     end
     
     % Unique words
-    unis = zeros(tbins * nDirs * reps, N);
-    u = 1;
-    
-    % Get unique words
-    for t = 1:tbins
-        for d = 1:nDirs
-            for r = 1:reps
-                unis(u,:) = code.code(:, t, d, r);
-                u = u + 1;
-            end
-        end
-    end
-   
-    code.words = unique(unis, 'rows')';
+    unis = reshape(code.code, [N, tbins * nDirs * reps]);
+    code.words = unique(unis', 'rows')';
     
     % Get word probabilities
     wordcount = numel(code.code(1, :, 1, :));
