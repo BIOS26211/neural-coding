@@ -53,7 +53,6 @@ function code = getCoding(neurons)
     % Iterate over each neuron
     for n = 1:N
         % Iterate over stimulus direction
-        % +1 to account for null dir
         dInd = ones(1, length(neurons(n).dirs) + 1);
         cd = ones(1, length(neurons(n).dirs) + 1);
         [dInd(2:end), cd(2:end)] = ismember(neurons(n).dirs, dirs);
@@ -96,7 +95,7 @@ function code = getCoding(neurons)
     tWC = numel(code.code(1, 1, 1, :));
     code.wordprobs = zeros(nDirs, length(code.words));
     code.wordProbsT = zeros(tbins, nDirs, length(code.words));
-    for d = 1:(nDirs-1)
+    for d = 1:nDirs
         for w = 1:length(code.words)
             wtimes = code.code(:,:,d,:) == code.words(:, w);
             wc = sum(wtimes);
