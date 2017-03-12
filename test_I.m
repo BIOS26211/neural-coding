@@ -25,7 +25,7 @@ I2 = rateInfo(r2(:,1),2);
 
 count1A1B = zeros(length(data),reps); %1A x 1B
 
-
+% 
 for r = 1:reps
     dataA = data(1,:,r); %row in data cell corresponding to cell A spike train
     dataB = data(2,:,r); %row in data cell corresponding to cell B spike train

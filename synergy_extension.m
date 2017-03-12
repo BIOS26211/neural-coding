@@ -9,7 +9,7 @@ if (isempty(strfind(pwd(), strcat(filesep, 'src'))))
     addpath('Reconstruction');
     addpath('MT_data');
 end
-%%
+%
 
 %load data
 n = loadMTData(36);
