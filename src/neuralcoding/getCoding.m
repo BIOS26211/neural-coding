@@ -95,8 +95,8 @@ function code = getCoding(neurons)
     wordcount = numel(code.code(1, :, 1, :));
     tWC = numel(code.code(1, 1, 1, :));
     code.wordprobs = zeros(nDirs, length(code.words));
-    wordProbsT = zeros(tbins, nDirs, length(code.words));
-    for d = 1:nDirs
+    code.wordProbsT = zeros(tbins, nDirs, length(code.words));
+    for d = 1:(nDirs-1)
         for w = 1:length(code.words)
             wtimes = code.code(:,:,d,:) == code.words(:, w);
             wc = sum(wtimes);
@@ -108,19 +108,19 @@ function code = getCoding(neurons)
                 wtimes = code.code(:,t,d,:) == code.words(:, w);
                 wc = sum(wtimes);
                 nw = sum(wc(:) == N);
-                wordProbsT(t, d, w) = nw / tWC;
+                code.wordProbsT(t, d, w) = nw / tWC;
             end
         end
     end
     
     % Get entropies
-    Pn = sum(code.wordprobs) / nDirs;
-    nSsums = wordProbsT .* log2(wordProbsT);
+    Pn = sum(code.wordprobs) / (nDirs - 1);
+    nSsums = code.wordProbsT .* log2(code.wordProbsT);
     nSsums(isnan(nSsums)) = 0;
     noiseS = -sum(sum(sum(nSsums)));
-    code.wordProbsT = wordProbsT;
-    code.entropy = -sum(Pn .* log2(Pn));
-    code.info = code.entropy - noiseS / (nDirs * tbins);
+    log2Pn = log2(Pn); log2Pn(isinf(log2Pn)) = 0;
+    code.entropy = -sum(Pn .* log2Pn);
+    code.info = code.entropy - noiseS / ((nDirs - 1) * tbins);
     
     
     code.size = length(code.words);
