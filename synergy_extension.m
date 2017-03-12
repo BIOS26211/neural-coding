@@ -31,10 +31,10 @@ for i = 1:length(b2)
     spikeA = find(dataA == 1); %location of 1's in A
     spikeB = find(dataB == 1); %location of 1's in B
     for j = 1:length(spikeA)
-        valA = spikeA(j);
+        valA = spikeA(j); %time position of spike A
         for k = 1:length(spikeB)
-            valB = spikeB(k);
-            diff = abs(valA - valB); %timebins between each spike
+            valB = spikeB(k); %time position of nonspike B
+            diff = abs(valA - valB); %time(bins) between each spike
             if diff <= 5 %within 10 ms of each other
                 count1A1B(1,i) = count1A1B(1,i)+1;
             end
@@ -55,10 +55,10 @@ for i = 1:length(b2)
     spikeA = find(dataA == 1); %location of 1's in A
     nonspikeB = find(dataB == 0); %location of 0's in B
     for j = 1:length(spikeA)
-        valA = spikeA(j);
+        valA = spikeA(j); %time position of spike A
         for k = 1:length(nonspikeB)
-            valB = nonspikeB(k);
-            diff = abs(valA - valB); %timebins between each spike
+            valB = nonspikeB(k); %time position of nonspike B
+            diff = abs(valA - valB); %time(bins) between each spike
             if diff <= 25 %within 50 ms of each other
                 count1A0B(1,i) = count1A0B(1,i)+1;
             end
@@ -75,7 +75,7 @@ b3 = nchoosek(1:36,3); %7140 possible combinations for triplets of cells
 count1A0B0C = zeros(1,length(b3)); %1A x 0B x 0C
 
 %1A x 0B x 0C
-for i = 1:length(b2)
+for i = 1:length(b3)
     cellA = b3(i,1); %cell A index
     cellB = b3(i,2); %cell B index
     cellC = b3(i,3); %cell C index
@@ -86,19 +86,25 @@ for i = 1:length(b2)
     nonspikeB = find(dataB == 0); %location of 0's in B
     nonspikeC = find(dataC == 0); %location of 0's in C
     for j = 1:length(spikeA)
-        valA = spikeA(j);
+        valA = spikeA(j); %time position of spike A
         for k = 1:length(nonspikeB)
-            valB = nonspikeB(k);
-            diff = abs(valA - valB); %timebins between each spike
-            if diff <= 25 %within 50 ms of each other
-                count1A0B(1,i) = count1A0B(1,i)+1;
+            valB = nonspikeB(k); %time position of nonspike B
+            diffAB = abs(valA - valB); %timebins between each spike
+            if diffAB <= 25 %within 50 ms of each other
+                for l = 1:length(nonspikeC)
+                    valC = nonspikeC(l); %time position of nonspike C
+                    diffBC = abs(valB - valC);
+                    if diffBC <= 10 %within 20 ms of each other
+                        count1A0B0C(1,i) = count1A0B0C(1,i)+1;
+                    end
+                end
             end
         end
     end
 end
 
 
-%%
+%% test data
 data25 = data(25,:);
 data26 = data(26,:);
 spike25 = find(data25 == 1);
