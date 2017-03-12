@@ -5,6 +5,7 @@ close all;
 if (isempty(strfind(pwd(), strcat(filesep, 'src'))))
     addpath('src');
     addpath('src/neuralcoding');
+    addpath('src/lib');
     addpath('Reconstruction');
     addpath('MT_data');
 end
@@ -13,34 +14,38 @@ end
 %load data
 n = loadMTData(36);
 c = getCoding(n); %36x384 array of spikes and silences
-data = c.code(:,:,1,1);
+reps = c.reps;
+data = c.code(:,:,1,:);
 
 %% 1A x 1B
 %matrix of possible combinations for pairs of A and B
 b2 = nchoosek(1:36,2); %630 possible combinations for pairs of cells
 
 %initialize delta I array
-count1A1B = zeros(1,length(b2)); %1A x 1B
+count1A1B = zeros(length(data),length(b2)); %1A x 1B
 
 %1A x 1B
-for i = 1:length(b2)
-    cellA = b2(i,1); %cell A index
-    cellB = b2(i,2); %cell B index
-    dataA = data(cellA,:); %row in data cell corresponding to cell A spike train
-    dataB = data(cellB,:); %row in data cell corresponding to cell B spike train  
-    spikeA = find(dataA == 1); %location of 1's in A
-    spikeB = find(dataB == 1); %location of 1's in B
-    for j = 1:length(spikeA)
-        valA = spikeA(j); %time position of spike A
-        for k = 1:length(spikeB)
-            valB = spikeB(k); %time position of nonspike B
-            diff = abs(valA - valB); %time(bins) between each spike
-            if diff <= 5 %within 10 ms of each other
-                count1A1B(1,i) = count1A1B(1,i)+1;
+for r = 1:reps
+    for i = 1:length(b2)
+        cellA = b2(i,1); %cell A index
+        cellB = b2(i,2); %cell B index
+        dataA = data(cellA,:); %row in data cell corresponding to cell A spike train
+        dataB = data(cellB,:); %row in data cell corresponding to cell B spike train  
+        spikeA = find(dataA == 1); %location of 1's in A
+        spikeB = find(dataB == 1); %location of 1's in B
+        for j = 1:length(spikeA)
+            valA = spikeA(j); %time position of spike A
+            for k = 1:length(spikeB)
+                valB = spikeB(k); %time position of nonspike B
+                diff = abs(valA - valB); %time(bins) between each spike
+                if diff <= 5 %within 10 ms of each other
+                    count1A1B(spikeA(j),i) = count1A1B(spikeA(j), i) + 1;
+                end
             end
         end
     end
 end
+count1A1B = count1A1B ./ reps;
 
 %% 1A x 10
 %initialize delta I array
