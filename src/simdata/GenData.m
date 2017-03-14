@@ -1,8 +1,8 @@
-function out = GenData(n,dt,tbin,ndir,prob,stimBin,P)
+function out = GenData(n,dt,tbin,ndir,prob,stimOrder,P)
 
 % By: Emma Bsales
 % University of Chicago
-% February 1, 2017. Updated March 5, 2017.
+% February 1, 2017. Updated March 11, 2017.
 % ebsales@uchicago.edu
 %--------------------------------------------------------------------------
 % This script generates a data set of information theory 'words' for 'n'
@@ -38,6 +38,7 @@ function out = GenData(n,dt,tbin,ndir,prob,stimBin,P)
 %--------------------------------------------------------------------------
 
 % parameters
+reps = 256*3;
 isPoisson = P;
 fireRate = dt;
 
@@ -46,13 +47,18 @@ dBins = ndir;          % number of direction bins; should be odd
 
 nNeurons = n;       % number of neurons
 pNeuron = prob;        % probability of each neuron firing for each stimBin
-stimBin = stimBin;
+stimOrder = stimOrder;
 
-fired = nan(nNeurons,tBins);     % create blank count vector
-words = nan(tBins,nNeurons);     % create blank words vector
+fired = nan(nNeurons,reps);     % create blank count vector
+words = nan(reps,nNeurons);     % create blank words vector
 degBins = nan(1,dBins);       % blank vector to put the degrees of each direction in
-%stimBin = randsample(dBins,tBins,true);      % randomly sample from the number of direction bins for each time bin
-dist = nan(nNeurons,tBins);        % distribution variable
+dist = nan(nNeurons,reps);        % distribution variable
+stimBin = nan;
+for i = 1:ndir
+stimBin = [stimBin repmat(stimOrder(i),[1,reps])];
+end
+stimBin = stimBin(~isnan(stimBin));
+
 
 if length(pNeuron(1,:)) == nNeurons
     pNeuron = pNeuron';
@@ -72,13 +78,13 @@ end
 
 % start generating data
 if isPoisson == 1
-    dist = poissrnd(0.5,[nNeurons,tBins]);
+    dist = poissrnd(0.5,[nNeurons,reps]);
 else
-    dist = 2*normrnd(0.5,0.2,[nNeurons,tBins]);
+    dist = 2*normrnd(0.5,0.2,[nNeurons,reps]);
 end
 
 for jj = 1:n
-for ii = 1:tBins
+for ii = 1:reps
     fired(jj,ii) = round(dist(jj,ii)*pNeuron(jj,stimBin(ii)));
     if fired(jj,ii) > 1
         fired(jj,ii) = 1;
@@ -91,12 +97,14 @@ end
 count = sum(fired);
 
 % fix form
-InputFormData = zeros(tBins+1,dBins+1,nNeurons);
+sampTimes = 1:fireRate:reps;
+InputFormData = zeros(length(sampTimes)+1,dBins+1,nNeurons);
 for j = 1:nNeurons
     InputFormData(1,2:end,j) = degBins;
-    for i = 2:tBins+1
-        placement = stimBin(i-1);
-        InputFormData(i,placement+1,j) = fired(j,i-1);
+    for i = 2:length(sampTimes)+1
+        st = (i-1)*fireRate;
+        placement = stimBin(st-1);
+        InputFormData(i,placement+1,j) = fired(j,st-1);
         InputFormData(i,1,j) = (i-1)*fireRate;
     end
 end
@@ -113,6 +121,7 @@ InputForm = InputFormData(2:end,2:end,:);
     out.dBins = dBins;
     out.isPoisson = isPoisson;
     out.stimBin = stimBin;
+    out.stimOrder = stimOrder;
     out.degBins = degBins;
     out.probabilities = pNeuron;
     out.fireRate = fireRate;
