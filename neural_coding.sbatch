@@ -4,8 +4,9 @@
 #SBATCH --output=neural_coding.out
 #SBATCH --error=neural_coding.err
 #SBATCH --partition=broadwl
-#SBATCH --ntasks=64
+#SBATCH --nodes=1
+#SBATCH --ntasks=16
 #SBATCH --account=mpcs51087
 
-module load matlab
-matlab par_neural_combos.m
+module load matlab/2016a
+matlab neural_combos.m
