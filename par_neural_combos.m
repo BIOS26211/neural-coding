@@ -36,6 +36,10 @@ spdata = zeros(length(nn), trials);     % sparsity
 mldata = zeros(length(nn), trials);     % ML decoder data (% correct)
 mapdata = zeros(length(nn), trials);    % MAP decoder data (% correct)
 
+% Initialize parallel cluster
+pc = parcluster('local');
+parpool(pc, getenv('SLURM_CPUS_ON_NODE'));
+
 fprintf('Generating %d data points....\n', length(nn))
 fprintf('--------------------------------------\n\n');
 
@@ -46,7 +50,7 @@ for n = 2:nstep:nneurons
     
     % Run 
     tic;
-    for t = 1:trials
+    parfor t = 1:trials
         ndata = loadMTData(n);
         ncode = getCoding(ndata);
         r = ncode.redundancy;
