@@ -53,6 +53,7 @@ function code = getCoding(neurons)
     % Iterate over each neuron
     for n = 1:N
         % Iterate over stimulus direction
+        % +1 to account for null dir
         dInd = ones(1, length(neurons(n).dirs) + 1);
         cd = ones(1, length(neurons(n).dirs) + 1);
         [dInd(2:end), cd(2:end)] = ismember(neurons(n).dirs, dirs);
@@ -75,26 +76,14 @@ function code = getCoding(neurons)
     end
     
     % Unique words
-    unis = zeros(tbins * nDirs * reps, N);
-    u = 1;
-    
-    % Get unique words
-    for t = 1:tbins
-        for d = 1:nDirs
-            for r = 1:reps
-                unis(u,:) = code.code(:, t, d, r);
-                u = u + 1;
-            end
-        end
-    end
-   
-    code.words = unique(unis, 'rows')';
+    unis = reshape(code.code, [N, tbins * nDirs * reps]);
+    code.words = unique(unis', 'rows')';
     
     % Get word probabilities
     wordcount = numel(code.code(1, :, 1, :));
     tWC = numel(code.code(1, 1, 1, :));
     code.wordprobs = zeros(nDirs, length(code.words));
-    code.wordProbsT = zeros(tbins, nDirs, length(code.words));
+    wordProbsT = zeros(tbins, nDirs, length(code.words));
     for d = 1:nDirs
         for w = 1:length(code.words)
             wtimes = code.code(:,:,d,:) == code.words(:, w);
@@ -107,19 +96,19 @@ function code = getCoding(neurons)
                 wtimes = code.code(:,t,d,:) == code.words(:, w);
                 wc = sum(wtimes);
                 nw = sum(wc(:) == N);
-                code.wordProbsT(t, d, w) = nw / tWC;
+                wordProbsT(t, d, w) = nw / tWC;
             end
         end
     end
     
     % Get entropies
-    Pn = sum(code.wordprobs) / (nDirs - 1);
-    nSsums = code.wordProbsT .* log2(code.wordProbsT);
+    Pn = sum(code.wordprobs) / nDirs;
+    nSsums = wordProbsT .* log2(wordProbsT);
     nSsums(isnan(nSsums)) = 0;
     noiseS = -sum(sum(sum(nSsums)));
-    log2Pn = log2(Pn); log2Pn(isinf(log2Pn)) = 0;
-    code.entropy = -sum(Pn .* log2Pn);
-    code.info = code.entropy - noiseS / ((nDirs - 1) * tbins);
+    code.wordProbsT = wordProbsT;
+    code.entropy = -sum(Pn .* log2(Pn));
+    code.info = code.entropy - noiseS / (nDirs * tbins);
     
     
     code.size = length(code.words);

@@ -13,6 +13,5 @@ function p = neuronProb(neuron)
     
     p = 1 ./ mean(neuron.data, 3);
     p(isinf(p)) = 0;
-    neuron.firerate = p;
 end
 

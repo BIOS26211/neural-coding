@@ -5,7 +5,7 @@
 close all; clear all;
 
 %% Overhead stuff -- must run before doing anything
-% Add src folder to path
+% Add src folder and children to path
 if (isempty(strfind(pwd(), strcat(filesep, 'src'))))
     addpath('src');
     addpath('src/decoder');
@@ -14,59 +14,108 @@ if (isempty(strfind(pwd(), strcat(filesep, 'src'))))
     addpath('src/simdata');
 end
 
-%% Check stats of a subset of neurons in data
-% Note to self: Loading all neurons into memory takes > 1 hr on Surface.
-tic;
-n = 8;
-ndata = loadMTData(n);
-ncode = getCoding(ndata);
-scode = shuffledcode(ncode);
-cwtcode = constwtcode(ncode);
-t_elapsed = toc;
-fprintf('Elapsed time: %.3f s\n', t_elapsed)
-
 %% Neuron redundancy in neural codes of various lengths
-% So does this
-trials = 1;
-nneurons = 2:2:18;
-rdata = zeros(length(nneurons), 1);
-prdata = zeros(length(nneurons), 1);
-idata = zeros(length(nneurons), 1);
-fprintf('Generating %d data points....\n', nneurons(end))
+% Meta
+trials = 1;         % General neuron trials
+dtrials = 10;       % Decoder trials
+nneurons = 16;
+nstep = 1;
+
+% Parameters
+p = 0.06; q = 0.1;
+
+% Run over:
+nn = 2:nstep:nneurons;
+
+% Initialize data matrices
+rdata = zeros(length(nn), trials);      % redundancy
+prdata = zeros(length(nn), trials);     % percent redundant
+idata = zeros(length(nn), trials);      % information
+szdata = zeros(length(nn), trials);     % code set size
+spdata = zeros(length(nn), trials);     % sparsity
+mldata = zeros(length(nn), trials);     % ML decoder data (% correct)
+mapdata = zeros(length(nn), trials);    % MAP decoder data (% correct)
+
+fprintf('Generating %d data points....\n', length(nn))
+
+% Run and time
 t_total = 0;
-for n = 1:length(nneurons)
+for n = 2:nstep:nneurons
+    fprintf('Working on %d-neuron words...\n', n)
+    
+    % Run 
     tic;
     for t = 1:trials
-        ndata = loadMTData(nneurons(n));
+        ndata = loadMTData(n);
         ncode = getCoding(ndata);
         r = ncode.redundancy;
         len = ncode.length;
-        rdata(n) = rdata(n) + r * len;
-        idata(n) = idata(n) + ncode.info;
+        rdata(n, t) = r * len;
+        prdata(n, t) = (r * len) / nn;
+        idata(n, t) = ncode.info;
+        szdata(n, t) = ncode.size;
+        spdata(n, t) = ncode.sparsity;
+        
+        % Decoder trials
+        mlCorrect = 0;
+        mapCorrect = 0;
+        for d = 1:dtrials
+           for w = 1:ncode.size
+               noisyw = noisegen(w, p, q);
+               wML = mlDecoder(noisyw, ncode.words, p, q);
+               wMAP = mapDecoder(noisyw, ncode.words, ncode.sparsity, p, q);
+               
+               mlCorrect = mlCorrect + sum(wML == w) / len;
+               mapCorrect = mapCorrect + sum(wMAP == w) / len;
+           end
+        end
+        mldata(n, t) = mlCorrect / (w * dtrials);
+        mapdata(n, t) = mapCorrect / (w * dtrials);
     end
-    rdata(n) = rdata(n) / trials;
-    prdata(n) = rdata(n) / nneurons(n);
-    idata(n) = idata(n) / trials;
+    
+    % Get end time and calculate elapsed time
     t_elapsed = toc;
     t_total = t_total + t_elapsed;
-    fprintf('%d neurons:\t%.4f redundant,\tinfo = %.4f (elapsed time: %.3f s)\n', nneurons(n), rdata(n), idata(n), t_elapsed)
+    
+    % Print info
+    fprintf('done')
 end
 fprintf('Total elapsed time: %.3f s\n', t_total);
 
+%% Figure plotting
+% For reference
+% rdata = zeros(length(nn), trials);      % redundancy
+% prdata = zeros(length(nn), trials);     % percent redundant
+% idata = zeros(length(nn), trials);      % information
+% szdata = zeros(length(nn), trials);     % code set size
+% spdata = zeros(length(nn), trials);     % sparsity
+% mldata = zeros(length(nn), trials);     % ML decoder data (% correct)
+% mapdata = zeros(length(nn), trials);    % MAP decoder data (% correct)
+
 figure();
-plot(nneurons, rdata, 'r-');
+plot(nn, rdata, 'r-');
 title('Number of redundant neurons for various code sizes');
 xlabel('Code size (number of neurons'); ylabel('Number of redundant neurons');
 
 figure();
-plot(nneurons, prdata, 'b-');
+plot(nn, prdata, 'b-');
 title('Percentage of redundant neurons for various code sizes');
 xlabel('Code size (number of neurons)'); ylabel('Percentage of redundant neurons');
 
 figure();
-plot(nneurons, idata, 'g-');
+plot(nn, idata, 'g-');
 title('Information of words of different neuron lengths');
 xlabel('Number of neurons'); ylabel('Information (bits)');
+
+figure();
+plot(nn, mldata, 'c-');
+title('ML decoder accuracy for various code lengths');
+xlabel('Number of neurons'); ylabel('Accuracy');
+
+figure();
+plot(nn, mapdata, 'm-');
+title('MAP decoder accuracy for various code lengths');
+xlabel('Number of neurons'); ylabel('Accuracy');
 
 %% Other questions
 % How do we simulate receptive fields using the data Dr. Palmer provided?
