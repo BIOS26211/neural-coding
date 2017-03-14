@@ -41,7 +41,7 @@ fprintf('Generating %d data points....\n', length(nn))
 % Run and time
 t_total = 0;
 for n = 2:nstep:nneurons
-    fprintf('Working on %d-neuron words...\n', n)
+    fprintf('Working on %d-neuron words... ', n)
     
     % Run 
     tic;
@@ -78,9 +78,14 @@ for n = 2:nstep:nneurons
     t_total = t_total + t_elapsed;
     
     % Print info
-    fprintf('done')
+    fprintf(' Done! (Elapsed time: %.3f sec\n', t_elapsed);
+    fprintf('\tInformation: %.3f\n', mean(idata(n,:)));
+    fprintf('\t# redundant: %.3f\n', mean(rdata(n,:)));
+    fprintf('\t% redundant: %.3f\n', mean(prdata(n,:)));
+    fprintf('\tML decoder accuracy: %.3f\n', mean(mldata(n,:)));
+    fprintf('\tMAP decoder accuracy: %.3f\n\n', mean(mapdata(n,:)));
 end
-fprintf('Total elapsed time: %.3f s\n', t_total);
+fprintf('Total elapsed time: %.3f sec\n', t_total);
 
 %% Figure plotting
 % For reference
