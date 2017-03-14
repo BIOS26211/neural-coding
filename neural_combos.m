@@ -8,6 +8,7 @@ close all; clear all;
 % Add src folder to path
 if (isempty(strfind(pwd(), strcat(filesep, 'src'))))
     addpath('src');
+    addpath('src/decoder');
     addpath('src/lib');
     addpath('src/neuralcoding');
     addpath('src/simdata');
@@ -15,24 +16,26 @@ end
 
 %% Check stats of a subset of neurons in data
 % Note to self: Loading all neurons into memory takes > 1 hr on Surface.
-fprintf('Start time: %s\n', datetime('now'))
-n = 16;
+tic;
+n = 8;
 ndata = loadMTData(n);
 ncode = getCoding(ndata);
 scode = shuffledcode(ncode);
 cwtcode = constwtcode(ncode);
-fprintf('End time: %s\n', datetime('now'))
+t_elapsed = toc;
+fprintf('Elapsed time: %.3f s\n', t_elapsed)
 
 %% Neuron redundancy in neural codes of various lengths
 % So does this
 trials = 1;
-nneurons = 2:2:16;
+nneurons = 2:2:18;
 rdata = zeros(length(nneurons), 1);
 prdata = zeros(length(nneurons), 1);
 idata = zeros(length(nneurons), 1);
-fprintf('Generating %d data points....\n|', length(nneurons))
-tic;
+fprintf('Generating %d data points....\n', nneurons(end))
+t_total = 0;
 for n = 1:length(nneurons)
+    tic;
     for t = 1:trials
         ndata = loadMTData(nneurons(n));
         ncode = getCoding(ndata);
@@ -40,16 +43,15 @@ for n = 1:length(nneurons)
         len = ncode.length;
         rdata(n) = rdata(n) + r * len;
         idata(n) = idata(n) + ncode.info;
-        fprintf('~')
     end
     rdata(n) = rdata(n) / trials;
     prdata(n) = rdata(n) / nneurons(n);
     idata(n) = idata(n) / trials;
-    %fprintf('\t%d neurons:\t%.4f redundant,\tinfo = %.4f\n', nneurons(n), rdata(n), idata(n))
-    fprintf('=')
+    t_elapsed = toc;
+    t_total = t_total + t_elapsed;
+    fprintf('%d neurons:\t%.4f redundant,\tinfo = %.4f (elapsed time: %.3f s)\n', nneurons(n), rdata(n), idata(n), t_elapsed)
 end
-t_elapsed = toc;
-fprintf('Elapsed time: %s s\n', t_elapsed)
+fprintf('Total elapsed time: %.3f s\n', t_total);
 
 figure();
 plot(nneurons, rdata, 'r-');
@@ -74,9 +76,6 @@ xlabel('Number of neurons'); ylabel('Information (bits)');
 % "In the case of orientation turning curves, the stimulus space is the
 % interval [0, pi), and the corresponding RF code is 1D."
 
-% Try: loading up n neurons and defining that as an RF of size n. Need to
-% define a binary response map (p. 1895 [5/35]) that maps a stimulus to a
-% code (set of codewords).
 
 %%
 close all;

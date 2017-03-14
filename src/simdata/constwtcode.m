@@ -7,21 +7,33 @@ function r = constwtcode(coding)
 
     % Get properties
     len = coding.length; r.length = len;
-    r.code = zeros(len, coding.size) - 2;  % +2 just for jitter
     
     % Get average code word weight
     dirs = length(coding.dirs) + 1;
     mwt = round(sum(sum(repmat(coding.weights, [dirs, 1]) .* coding.wordprobs)));
     
-    for i = 1:coding.size
-        p = randperm(len, mwt);
-        w = zeros(len, 1);
-        w(p) = 1;
-        while (any(sum(w == r.code) == len))
-            p = randperm(len, len);
-            w = coding.words(p, i);
+    % Can't have more than size!/(size - mwt)!
+    maxn = factorial(len) / factorial(len - mwt);
+    if (maxn < coding.size)
+        r.code = zeros(len, maxn);
+        % Just generate all possible codes
+        iAll = nchoosek(1:coding.size, mwt);
+        for i = 1:maxn
+            r.code(iAll(i,:), i) = 1;
         end
-        r.code(:, i) = w;
+    else
+        r.code = zeros(len, coding.size) - 2;  % +2 just for jitter
+        for i = 1:coding.size
+            p = randperm(len, mwt);
+            w = zeros(len, 1);
+            w(p) = 1;
+            while (any(sum(w == r.code) == len))
+                p = randperm(len, mwt);
+                w = zeros(len, 1);
+                w(p) = 1;
+            end
+            r.code(:, i) = w;
+        end
     end
     
     % Get unique words

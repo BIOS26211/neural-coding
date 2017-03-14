@@ -1,6 +1,6 @@
 function p = neuronProb(neuron)
 %NEURONPROB Given a neuron struct, calculates the trial-averaged firing
-% rate probability at each time 1 for each direction. Returns the firing
+% rate probability at each time for each direction. Returns the firing
 % rate probability matrix.
 
     if (~any(strcmp('data', fieldnames(neuron))))
