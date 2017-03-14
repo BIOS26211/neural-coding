@@ -18,7 +18,7 @@ end
 % Meta
 trials = 1;         % General neuron trials
 dtrials = 10;       % Decoder trials
-nneurons = 36;
+nneurons = 18;
 nstep = 1;
 
 % Parameters

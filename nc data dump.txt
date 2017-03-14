@@ -1,0 +1,146 @@
+Working on 2-neuron words...  done! (elapsed time: 3.912 sec)
+	Information: 0.068
+	# redundant: 0.000
+	% redundant: 0.000
+	ML decoder accuracy: 0.200
+	MAP decoder accuracy: 0.200
+
+Working on 3-neuron words...  done! (elapsed time: 4.561 sec)
+	Information: 0.065
+	# redundant: 0.000
+	% redundant: 0.000
+	ML decoder accuracy: 0.100
+	MAP decoder accuracy: 0.100
+
+Working on 4-neuron words...  done! (elapsed time: 8.087 sec)
+	Information: 0.119
+	# redundant: 0.093
+	% redundant: 0.023
+	ML decoder accuracy: 0.040
+	MAP decoder accuracy: 0.040
+
+Working on 5-neuron words...  done! (elapsed time: 9.620 sec)
+	Information: 0.160
+	# redundant: 0.093
+	% redundant: 0.019
+	ML decoder accuracy: 0.027
+	MAP decoder accuracy: 0.027
+
+Working on 6-neuron words...  done! (elapsed time: 18.439 sec)
+	Information: 0.175
+	# redundant: 0.574
+	% redundant: 0.096
+	ML decoder accuracy: 0.014
+	MAP decoder accuracy: 0.014
+
+Working on 7-neuron words...  done! (elapsed time: 21.713 sec)
+	Information: 0.233
+	# redundant: 0.978
+	% redundant: 0.140
+	ML decoder accuracy: 0.010
+	MAP decoder accuracy: 0.010
+
+Working on 8-neuron words...  done! (elapsed time: 35.976 sec)
+	Information: 0.231
+	# redundant: 1.286
+	% redundant: 0.161
+	ML decoder accuracy: 0.005
+	MAP decoder accuracy: 0.005
+
+Working on 9-neuron words...  done! (elapsed time: 76.763 sec)
+	Information: 0.405
+	# redundant: 1.245
+	% redundant: 0.138
+	ML decoder accuracy: 0.002
+	MAP decoder accuracy: 0.002
+
+Working on 10-neuron words...  done! (elapsed time: 79.250 sec)
+	Information: 0.282
+	# redundant: 2.476
+	% redundant: 0.248
+	ML decoder accuracy: 0.002
+	MAP decoder accuracy: 0.002
+
+Working on 11-neuron words...  done! (elapsed time: 206.348 sec)
+	Information: 0.353
+	# redundant: 2.660
+	% redundant: 0.242
+	ML decoder accuracy: 0.002
+	MAP decoder accuracy: 0.002
+
+Working on 12-neuron words...  done! (elapsed time: 251.653 sec)
+	Information: 0.509
+	# redundant: 3.133
+	% redundant: 0.261
+	ML decoder accuracy: 0.001
+	MAP decoder accuracy: 0.001
+
+Working on 13-neuron words...  done! (elapsed time: 354.258 sec)
+	Information: 0.591
+	# redundant: 3.660
+	% redundant: 0.282
+	ML decoder accuracy: 0.001
+	MAP decoder accuracy: 0.001
+
+Working on 14-neuron words...  done! (elapsed time: 312.423 sec)
+	Information: 0.497
+	# redundant: 4.873
+	% redundant: 0.348
+	ML decoder accuracy: 0.001
+	MAP decoder accuracy: 0.001
+
+Working on 15-neuron words...  done! (elapsed time: 1017.278 sec)
+	Information: 0.806
+	# redundant: 4.653
+	% redundant: 0.310
+	ML decoder accuracy: 0.000
+	MAP decoder accuracy: 0.000
+
+Working on 16-neuron words...  done! (elapsed time: 866.796 sec)
+	Information: 0.665
+	# redundant: 5.876
+	% redundant: 0.367
+	ML decoder accuracy: 0.000
+	MAP decoder accuracy: 0.000
+
+Working on 17-neuron words...  done! (elapsed time: 1243.373 sec)
+	Information: 0.800
+	# redundant: 6.535
+	% redundant: 0.384
+	ML decoder accuracy: 0.000
+	MAP decoder accuracy: 0.000
+
+Working on 18-neuron words...  done! (elapsed time: 1351.998 sec)
+	Information: 0.809
+	# redundant: 7.505
+	% redundant: 0.417
+	ML decoder accuracy: 0.000
+	MAP decoder accuracy: 0.000
+
+Working on 19-neuron words...  done! (elapsed time: 2703.377 sec)
+	Information: 0.940
+	# redundant: 7.865
+	% redundant: 0.414
+	ML decoder accuracy: 0.000
+	MAP decoder accuracy: 0.000
+
+Working on 20-neuron words...  done! (elapsed time: 5385.114 sec)
+	Information: 1.210
+	# redundant: 8.271
+	% redundant: 0.414
+	ML decoder accuracy: 0.000
+	MAP decoder accuracy: 0.000
+
+Working on 21-neuron words...  done! (elapsed time: 4217.728 sec)
+	Information: 1.068
+	# redundant: 9.480
+	% redundant: 0.451
+	ML decoder accuracy: 0.000
+	MAP decoder accuracy: 0.000
+
+Working on 22-neuron words...  done! (elapsed time: 5262.742 sec)
+	Information: 1.097
+	# redundant: 10.313
+	% redundant: 0.469
+	ML decoder accuracy: 0.000
+	MAP decoder accuracy: 0.000
