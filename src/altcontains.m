@@ -1,4 +1,4 @@
-function inds = contains(cells, str)
+function inds = altcontains(cells, str)
     n = length(cells);
     inds = zeros(size(cells));
     for i = 1:n
