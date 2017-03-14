@@ -12,11 +12,12 @@ if (isempty(strfind(pwd(), strcat(filesep, 'src'))))
 end
 
 %load data
-n = loadMTData(2);
+n = loadMTData(36);
 c = getCoding(n); %36x384 array of spikes and silences
 data = c.code(:,:,1,:); %neuron, time bins, direction, trials
 reps = c.reps; %number of trials
 
+%%
 r1 = neuronProb(n(1));
 I1 = rateInfo(r1(:,1),2); %direction 1, dt = 2ms (time bins)
 
