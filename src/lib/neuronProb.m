@@ -7,11 +7,15 @@ function p = neuronProb(neuron)
         error('Couldnt get neuron data');
     end
     
-    if (max(neuron.data(:)) > 1)
-        neuron.data(neuron.data > 1) = 1;
-    end
+    for i = 1:length(neuron)
+        if (max(neuron(i).data(:)) > 1)
+            neuron(i).data(neuron(i).data > 1) = 1;
+        end
     
-    p = 1 ./ mean(neuron.data, 3);
+        p(:,:,i) = 1 ./ mean(neuron(i).data, 3);
+    end
     p(isinf(p)) = 0;
+        
+    neuron.firerate = p;
+    
 end
-
