@@ -20,7 +20,7 @@ function neurons = loadMTData(N)
     
     % Get the indices of files in the folder that are .mat data files for
     % neuron activity. Files are of the format: "cell_xxxxx.mat"
-    if (verLessThan('matlab', '9.1')
+    if (verLessThan('matlab', '9.1'))
         inds = altcontains(files, '.mat') & altcontains(files, 'cell');
     else
         inds = contains(files, '.mat') & contains(files, 'cell');
