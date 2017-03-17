@@ -1,8 +1,8 @@
-function out = GenData(n,dt,tbin,ndir,prob,stimOrder,P)
+function out = GenData(n,dt,prob,np,nq,stimOrder,P)
 
 % By: Emma Bsales
 % University of Chicago
-% February 1, 2017. Updated March 11, 2017.
+% February 1, 2017. Updated March 14, 2017.
 % ebsales@uchicago.edu
 %--------------------------------------------------------------------------
 % This script generates a data set of information theory 'words' for 'n'
@@ -39,11 +39,13 @@ function out = GenData(n,dt,tbin,ndir,prob,stimOrder,P)
 
 % parameters
 reps = 256*3;
+degBins = [-90 -75 -60 -45 -30 -15 0 15 30 45 60 75 90 nan];
+
 isPoisson = P;
 fireRate = dt;
-
-tBins = tbin;         % number of time bins*
-dBins = ndir;          % number of direction bins; should be odd
+noise(1) = np;          % probabiltiy with noise of a 0 going to a 1
+noise(2) = nq;          % probabiltiy with noise of a 1 going to a 0
+dBins = length(degBins);          % number of direction bins; should be odd
 
 nNeurons = n;       % number of neurons
 pNeuron = prob;        % probability of each neuron firing for each stimBin
@@ -51,10 +53,9 @@ stimOrder = stimOrder;
 
 fired = nan(nNeurons,reps);     % create blank count vector
 words = nan(reps,nNeurons);     % create blank words vector
-degBins = nan(1,dBins);       % blank vector to put the degrees of each direction in
 dist = nan(nNeurons,reps);        % distribution variable
 stimBin = nan;
-for i = 1:ndir
+for i = 1:length(stimOrder)
 stimBin = [stimBin repmat(stimOrder(i),[1,reps])];
 end
 stimBin = stimBin(~isnan(stimBin));
@@ -71,30 +72,40 @@ elseif length(pNeuron) ~= dBins && length(pNeuron) == nNeurons
     pNeuron = repmat(pNeuron, [1 dBins]);
 end
 
-stimBinSize = 180/(dBins-1);                                    % caluclate the size of the direciton bins
-for i = 1:dBins
-    degBins(i) = stimBinSize*i-(90+stimBinSize);              % calculate the degree of each direction
-end
-
 % start generating data
+% calculate distribution
 if isPoisson == 1
     dist = poissrnd(0.5,[nNeurons,reps]);
 else
     dist = 2*normrnd(0.5,0.2,[nNeurons,reps]);
 end
-
+% calculate if it has fired or not
 for jj = 1:n
 for ii = 1:reps
     fired(jj,ii) = round(dist(jj,ii)*pNeuron(jj,stimBin(ii)));
     if fired(jj,ii) > 1
         fired(jj,ii) = 1;
     end
+    % add noise
+    r1 = rand(1);
+    if fired(jj,ii) == 0
+        if r1 < noise(1)
+            fired(jj,ii) = 1;
+        end
+    elseif fired(jj,ii) == 1
+        if r1 < noise(2)
+            fired(jj,ii) = 0;
+        end
+    end
 end
 end
-for i = 1:tBins
-words(i,:) = (fired(:,i))';           % put it in easier form to read as 'words'
+% put it in easier form to read as 'words'
+for i = 1:reps
+words(i,:) = (fired(:,i))';           
 end
-count = sum(fired);
+% calculate count = how many neurons fired for each time bin
+count = sum(fired,2);
+tcount = sum(fired);
 
 % fix form
 sampTimes = 1:fireRate:reps;
@@ -102,9 +113,18 @@ InputFormData = zeros(length(sampTimes)+1,dBins+1,nNeurons);
 for j = 1:nNeurons
     InputFormData(1,2:end,j) = degBins;
     for i = 2:length(sampTimes)+1
-        st = (i-1)*fireRate;
-        placement = stimBin(st-1);
-        InputFormData(i,placement+1,j) = fired(j,st-1);
+        fin = (i-1)*fireRate;
+        st = (i-2)*fireRate+1;
+        placement = stimBin(fin-1);
+        delta = fin-st;
+        for ii=1:delta
+            value(ii) = fired(j,st+ii);
+        end
+        if sum(value) <= 1
+            InputFormData(i,placement+1,j) = sum(value);
+        elseif sum(value) > 1
+            InputFormData(i,placement+1,j) = 1;
+        end
         InputFormData(i,1,j) = (i-1)*fireRate;
     end
 end
@@ -117,7 +137,6 @@ InputForm = InputFormData(2:end,2:end,:);
         out.type = 'dept';
     end
     out.nNeurons = nNeurons;
-    out.tBins = tBins;
     out.dBins = dBins;
     out.isPoisson = isPoisson;
     out.stimBin = stimBin;
@@ -131,4 +150,5 @@ InputForm = InputFormData(2:end,2:end,:);
     out.count = count;
     out.InputFormData = InputFormData;
     out.InputForm = InputForm;
+    out.tcount = tcount;
 end
