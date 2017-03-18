@@ -60,8 +60,16 @@ for i = 1:length(b2)
     end
     deltaI(i) = IAB(i) - nI(b2(i, 1)) - nI(b2(i, 2));
 end   
+
+edges = min(deltaI):5e-04:max(deltaI);
+
 figure;
-histogram(deltaI)
+hold on;
+histogram(deltaI,edges);
+xlabel('synergy (bits)');
+ylabel('Probability Density');
+title('Probability Density for 1A x 1B');
+hold off;
     
 %% 1A x 10
 %initialize delta I array
@@ -104,10 +112,17 @@ for i = 1:length(b2)
         IAB(i) = 0;
     end
     deltaI(i) = IAB(i) - nI(b2(i, 1)) - n0(b2(i, 2));
-end   
+end
+
+edges = min(deltaI):5e-04:max(deltaI);
+
 figure;
-edges = min(deltaI):5e-05:max(deltaI)
-histogram(deltaI,edges)
+hold on;
+histogram(deltaI,edges);
+xlabel('synergy (bits)');
+ylabel('Probability Density');
+title('Probability Density for 1A x 0B');
+hold off;
 
 %% 1A x 0B x 0C
 
@@ -180,26 +195,14 @@ for i = 1:length(b3)
         I0BC(i) = 0;
     end
     deltaI(i) = IABC(i) - nI(b3(i, 1)) - I0BC(i);
-end   
+end  
+
+edges = min(deltaI):5e-05:max(deltaI);
+
 figure;
-edges = min(deltaI):5e-05:max(deltaI)
-histogram(deltaI,edges)
-
-
-%% test data
-data25 = data(25,:);
-data26 = data(26,:);
-spike25 = find(data25 == 1);
-spike26 = find(data26 == 1);
-for i = 1:length(spike25)
-    k = 0;
-    val25 = spike25(i);
-    for j = 1:length(spike26)
-        val26 = spike26(j);
-        diff = abs(val25 - val26);
-        if diff <= 5
-            k = k+1;
-        end
-    end
-end
-        
+hold on;
+histogram(deltaI,edges);
+xlabel('synergy (bits)');
+ylabel('Probability Density');
+title('Probability Density for 1A x 0B x 0B');
+hold off;
